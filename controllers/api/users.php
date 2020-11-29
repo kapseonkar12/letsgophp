@@ -26,8 +26,24 @@ class Users extends REST_Controller {
     }
 
 	public function index_get()
-	{ echo "test";
-		$data = $data = $this->db->get("test_user")->result();
+	{ 
+		echo "exe"; exit;
+		$data = array (  
+				    [  
+				        "ClientId" => 11,  
+				        "ClientName"=>"Hytech Professionals"  
+				    ],  
+				    [  
+				        "ClientId" => 12,  
+				        "ClientName" => "RVS IT Consulting"  
+				    ],  
+				    [  
+				        "ClientId" => 13,  
+				        "ClientName" => "MCN Solution"  
+				    ],  
+				    
+				    
+		)  ;
 		$this->response($data, REST_Controller::HTTP_OK);
 	}
 

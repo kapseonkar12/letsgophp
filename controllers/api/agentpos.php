@@ -19,16 +19,14 @@ class Agentpos extends REST_Controller {
     	header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
        
        parent::__construct();
-	   //$this->load->database();
-	   //$this->load->library('form_validation');
-	   //$this->load->library("security");
+	   $this->load->model("Doemail");
     }
 
 	
 
 	public function confirmregistration_post() {
-		print_r($_FILES);
-		//print_r($this->input);
+		//print_r($_FILES);
+		//print_r($this->input->post());
 		$error_file_flg = $error_data_flg = 1 ;
 		/**
 		**  Logic For Createing Agent ID
@@ -49,7 +47,8 @@ class Agentpos extends REST_Controller {
 			$data['email']			=	$this->input->post("email");
 			$data['extramobile']	=	$this->input->post("extramobile");
 
-			$data['password']		=	password_hash($this->input->post("password"), PASSWORD_BCRYPT);
+			$data['password']		=  $this->input->post("password");
+			$data['hash']		= 	password_hash($this->input->post("password"), PASSWORD_BCRYPT);
 
 			//$data['confirmPassword']=	$this->input->post("confirmPassword");
 			$data['qualification']	=$this->input->post("qualification");
@@ -66,23 +65,37 @@ class Agentpos extends REST_Controller {
 			$data['accountnumber']	=	$this->input->post("accountnumber");
 			$data['ifsccode']		=	$this->input->post("ifsccode");
 			$data['createdat']		= date("Y-m-d H:i:s");
-			$data['status']		=	2 ;
 
-			$password_h = password_hash($this->input->post('password'), PASSWORD_BCRYPT);
+			/**
+			*	Statu for Agent registetion is 3
+			*   Status for Sysadmin after verification is 2
+			*   user get activation email and link user click activation link then it will  1
+			*   Agent user will soft remove 0
+			* 
+			*/
+
+			$data['status']		=	3 ;
+
+			
 					
+			/*
+			$password_h = password_hash($this->input->post('password'), PASSWORD_BCRYPT);
 			$userdata['firstName']	=	$data['firstName'];
 			$userdata['lastName']	=	$data['lastName'];
 			$userdata['mobile']		=	$data['mobile'];
 			$userdata['email']		=	$data['email']	;
 			$userdata['hash']		=	$data['password'];
 			$userdata['usertype']		=	"agent";
-			$userdata['status']		=	2 ;
+			
+			
+
+			$userdata['status']		=	3;
 			$userdata['createdat']		= $data['createdat'];
-		
+			*/
 
 		$this->form_validation->set_rules('firstName', 'FirstName', 'required|trim|xss_clean|is_unique[posagent.firstname]');
 
-		/*$this->form_validation->set_rules('lastName', 'LastName', 'required|trim|xss_clean');
+		$this->form_validation->set_rules('lastName', 'LastName', 'required|trim|xss_clean');
 		$this->form_validation->set_rules('dob', 'DateofBirth', 'required|trim|xss_clean');
 		$this->form_validation->set_rules('mobile', 'Mobile', 'required|trim|xss_clean');
 		$this->form_validation->set_rules('email', 'email', 'required|trim|xss_clean');
@@ -94,7 +107,7 @@ class Agentpos extends REST_Controller {
 		$this->form_validation->set_rules('accounttype', 'Accounttype', 'required|trim|xss_clean');
 		$this->form_validation->set_rules('accountnumber', 'Account Number', 'required|trim|xss_clean');
 		$this->form_validation->set_rules('ifsccode', 'IFSC code', 'required|trim|xss_clean');
-	*/
+	
 
 
 		//print_r($this->input->post());
@@ -146,9 +159,9 @@ class Agentpos extends REST_Controller {
           					if($this->db->insert_id()) {
           						$error_data_flg = 0 ;
           						echo  $this->db->insert_id();
-          						print_r($userdata);
           						$userdata['agnt_ref_id'] = $this->db->insert_id();
-          						$this->db->insert('users',$userdata);
+          						//$this->db->insert('users',$userdata);
+          						$this->Doemail->email_toagentregistration($data['email'] , $data['firstName'] . $data['middleName'] . $data['lastName']);
 
           					}	
 
