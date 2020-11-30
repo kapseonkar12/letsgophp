@@ -49,7 +49,7 @@ class Agent extends REST_Controller {
 
 						return $this->response(json_encode($result[0]), REST_Controller::HTTP_OK);
 				}else{
-					return $this->response(array("status" =>0 , "error" => "Request Data having problem..."), REST_Controller::HTTP_BAD_REQUEST);
+					return $this->response(REQUEST_ERROR, REST_Controller::HTTP_UNAUTHORIZED);
 				}
 
 			}
@@ -75,6 +75,36 @@ class Agent extends REST_Controller {
 						//return $this->response(json_encode( ['data'=>$agentdetail]), REST_Controller::HTTP_OK);
 
 						return $this->response(json_encode( $result[0]), REST_Controller::HTTP_OK);
+					}else{
+						return $this->response(REQUEST_ERROR, REST_Controller::HTTP_BAD_REQUEST);
+					}
+
+			}
+
+	}
+
+	public function agentLeadDetails_get() {
+
+			$agentId =xss_clean( trim($this->input->get('agentid')) );    
+			if($agentId != "") {
+					//$this->db->select('agentid, email , mobile , pancard');
+	          		$this->db->where('agentid', $agentId);
+					$query = $this->db->get('lead');
+					$result = $query->result();
+					//print_r($result);
+					$i = 0; $leadDetail = [];
+					 
+					if($query->num_rows() !=0  ){
+
+						//$leadDetail[$i]["name"]=$result[0]->agentid;
+						//$leadDetail[$i]["mobile"]=$result[0]->agentid;
+						//$leadDetail[$i]["email"]=$result[0]->agentid;
+						//$leadDetail[$i]["status"]=$result[0]->agentid;
+						//$leadDetail[$i]["policy"]=$result[0]->agentid;
+						//$leadDetail[$i]["agentid"]=$result[0]->agentid;
+						$i++;
+
+						return $this->response(json_encode($result), REST_Controller::HTTP_OK);
 					}else{
 						return $this->response(REQUEST_ERROR, REST_Controller::HTTP_BAD_REQUEST);
 					}
