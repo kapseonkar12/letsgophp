@@ -93,30 +93,30 @@ class Agentpos extends REST_Controller {
 			$userdata['createdat']		= $data['createdat'];
 			*/
 
-		$this->form_validation->set_rules('firstName', 'FirstName', 'required|trim|xss_clean|is_unique[posagent.firstname]');
+		$this->form_validation->set_rules('firstName', 'FirstName', 'required|trim|xss_clean|is_unique[posagent.firstname]|min_length[6]|max_length[15]');
 
-		$this->form_validation->set_rules('lastName', 'LastName', 'required|trim|xss_clean');
+		$this->form_validation->set_rules('lastName', 'LastName', 'required|trim|xss_clean|min_length[3]|max_length[15]');
+		
 		$this->form_validation->set_rules('dob', 'DateofBirth', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('mobile', 'Mobile', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('email', 'email', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('password', 'Password', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('pancard', 'Pancard', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('pincode', 'Pincode', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('bankname', 'Bank Name', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('branchname', 'Branch Name', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('accounttype', 'Accounttype', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('accountnumber', 'Account Number', 'required|trim|xss_clean');
-		$this->form_validation->set_rules('ifsccode', 'IFSC code', 'required|trim|xss_clean');
+		$this->form_validation->set_rules('mobile', 'Mobile', 'required|trim|xss_clean|max_length[14]|regex_match[/^[0-9]{10}$/]');
+		$this->form_validation->set_rules('email', 'email', 'required|trim|xss_clean|valid_email|max_length[50]');
+		$this->form_validation->set_rules('password', 'Password', 'required|trim|xss_clean|min_length[6]|max_length[15]');
+		$this->form_validation->set_rules('pancard', 'Pancard', 'required|trim|xss_clean|min_length[10]|max_length[10]');
+		$this->form_validation->set_rules('pincode', 'Pincode', 'required|trim|xss_clean|min_length[6]|max_length[6]|regex_match[/^[0-9]{6}$/]');
+		$this->form_validation->set_rules('bankname', 'Bank Name', 'required|trim|xss_clean|min_length[3]|max_length[20]');
+		$this->form_validation->set_rules('branchname', 'Branch Name', 'required|trim|xss_clean|min_length[3]|max_length[20]');
+		$this->form_validation->set_rules('accounttype', 'Accounttype', 'required|trim|xss_clean|min_length[3]|max_length[10]');
+		$this->form_validation->set_rules('accountnumber', 'Account Number', 'required|trim|xss_clean|min_length[9]|max_length[18]');
+		$this->form_validation->set_rules('ifsccode', 'IFSC code', 'required|trim|xss_clean|min_length[11]|max_length[11]');
 	
-
 
 		//print_r($this->input->post());
 		if($this->form_validation->run() === false ) {
-
+			echo validation_errors();
 
 			return $this->response(json_encode(REQUEST_ERROR), REST_Controller::HTTP_BAD_REQUEST);
 
-		} else {
+		} else { echo"proper"; exit;
 
 			if(  !empty($data['gender'])  &&  !empty($data['firstName']) &&  !empty($data['lastName'])  &&  !empty($data['dob'])  &&  !empty($data['mobile'])  &&  !empty($data['email'])  &&   !empty($data['password'])  &&  !empty($data['qualification']) &&  !empty($data['pancard']) && !empty($data['pincode']) &&  !empty($data['bankname'])   &&  !empty($data['branchname']) && !empty($data['accounttype']) &&  !empty($data['accountnumber']) &&  !empty($data['ifsccode'])  ) {
 					
@@ -134,7 +134,6 @@ class Agentpos extends REST_Controller {
 
 							if ( ! $this->upload->do_upload('document'))
 							{
-
 								//$error = array('error' => $this->upload->display_errors());
 
 								return $this->response((REQUEST_ERROR), REST_Controller::HTTP_BAD_REQUEST);
@@ -153,7 +152,7 @@ class Agentpos extends REST_Controller {
 
 						/*
 						*   WHile inserting data use $this->security->xss_clean($data);
-						* $data include all required post data
+						*   $data include all required post data
 						**
 						*/
 						
