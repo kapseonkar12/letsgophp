@@ -113,7 +113,8 @@ class Agentpos extends REST_Controller {
 		//print_r($this->input->post());
 		if($this->form_validation->run() === false ) {
 
-			return $this->response(array("status" =>0 , "error" => "Request Data having problem...1"), REST_Controller::HTTP_BAD_REQUEST);
+
+			return $this->response(json_encode(REQUEST_ERROR), REST_Controller::HTTP_BAD_REQUEST);
 
 		} else {
 
@@ -126,16 +127,17 @@ class Agentpos extends REST_Controller {
 							$config['max_size']             = 102423;
 							$config['max_width']            = 10231234;
 							$config['max_height']           = 1024123;
-							$config['file_name'] =$this->security->sanitize_filename( $data['firstName'] . '-' .$data['mobile'].'-'.date("Y-m-d").'-'.$_FILES['document']['name'] );
+							//$config['file_name'] =$this->security->sanitize_filename( $data['firstName'] . '-' .$data['mobile'].'-'.date("Y-m-d").'-'.$_FILES['document']['name'] );
+							$config['file_name'] = $data['firstName'] . '-' .$data['mobile'].'-'.date("Y-m-d").'-'.$_FILES['document']['name'];
 							$upload_file ="";
 							$this->load->library('upload', $config);
 
 							if ( ! $this->upload->do_upload('document'))
 							{
 
-								$error = array('error' => $this->upload->display_errors());
+								//$error = array('error' => $this->upload->display_errors());
 
-								return $this->response(array("status" =>0 , "error" => "Request Data having problem file..."), REST_Controller::HTTP_BAD_REQUEST);
+								return $this->response((REQUEST_ERROR), REST_Controller::HTTP_BAD_REQUEST);
 								
 							}
 							else
@@ -158,26 +160,26 @@ class Agentpos extends REST_Controller {
 							$this->db->insert('posagent',$data);
           					if($this->db->insert_id()) {
           						$error_data_flg = 0 ;
-          						echo  $this->db->insert_id();
           						$userdata['agnt_ref_id'] = $this->db->insert_id();
           						//$this->db->insert('users',$userdata);
-          						$this->Doemail->email_toagentregistration($data['email'] , $data['firstName'] . $data['middleName'] . $data['lastName']);
+          						$agentNameForEmail = $data['firstName'] .' ' . $data['middleName'] . ' ' . $data['lastName'] ;
+          						$this->Doemail->email_toagentregistration($data['email'] , $agentNameForEmail);
 
           					}	
 
 			} else {
 
-				return $this->response(array("status" =>0 , "error" => "Request Data having problem...2"), REST_Controller::HTTP_BAD_REQUEST);
+				return $this->response((REQUEST_ERROR), REST_Controller::HTTP_BAD_REQUEST);
 			}
 		}
 		
 
 		if( ($error_file_flg==1) || ($error_data_flg ==1 )) {
 			//Error
-			return $this->response(array("status" =>0 , "error" => "Request Data having problem...flag"), REST_Controller::HTTP_BAD_REQUEST);
+			return $this->response((REQUEST_ERROR), REST_Controller::HTTP_BAD_REQUEST);
 		} else {
 			// Ok r
-			return $this->response(array("status" => 1 , "message"=>"success.."), REST_Controller::HTTP_OK);	
+			return $this->response((REQUEST_SUCESS), REST_Controller::HTTP_OK);	
 		}
 		
 	}

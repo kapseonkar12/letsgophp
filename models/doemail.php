@@ -16,7 +16,7 @@ class Doemail extends CI_Model {
 
         $this->email->subject(EMAIL_SUBJECT_AGENT_REGI);
         $this->email->set_mailtype("html");
-      echo  $message = 
+        $message = 
 				     '<!DOCTYPE html>
 		    <html lang="en">
 
@@ -75,7 +75,9 @@ class Doemail extends CI_Model {
 
         $this->email->send();
 
-       echo $this->email->print_debugger();
+        return;
+
+       //echo $this->email->print_debugger();
 	}
 
 
