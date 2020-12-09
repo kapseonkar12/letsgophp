@@ -115,5 +115,40 @@ class Agent extends REST_Controller {
 	}
 	
 
+	public function addagentLead_post() {
+		
+		$this->form_validation->set_rules('name', 'Agent Name', 'required|trim|xss_clean');
+		$this->form_validation->set_rules('mobile', 'Mobile', 'required|trim|xss_clean|max_length[14]|regex_match[/^[0-9]{10}$/]');
+		$this->form_validation->set_rules('email', 'Email', 'required|trim|xss_clean|valid_email|max_length[50]');
+		$this->form_validation->set_rules('status', 'Status', 'required|trim|xss_clean');
+		$this->form_validation->set_rules('agentid', 'Agent Id', 'required|trim|xss_clean');
+		$this->form_validation->set_rules('policy', 'Policy Type', 'required|trim|xss_clean');
+
+			if($this->form_validation->run() === false ) {
+				   // echo validation_errors();
+ 					return $this->response(REQUEST_ERROR, REST_Controller::HTTP_OK);
+
+			} else {
+				
+					$data['agentid'] =    $this->input->post("agentid") ;
+					$data['name']			=	$this->input->post("name");
+					$data['mobile']		=	$this->input->post("mobile");
+					$data['email']			=	$this->input->post("email");
+					$data['status']	=	$this->input->post("status");
+					$data['policy'] = $this->input->post("policy");
+					//print_r($data);
+					$this->db->insert('lead',$this->security->xss_clean($data));
+					if($this->db->insert_id()) {
+          							
+						return $this->response(REQUEST_SUCESS, REST_Controller::HTTP_OK);
+          			} else {
+          				return $this->response(REQUEST_ERROR, REST_Controller::HTTP_OK);
+          			}	
+					
+			}
+		
+	}	
+
+
 
 }
