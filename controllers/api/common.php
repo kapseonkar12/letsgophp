@@ -182,4 +182,146 @@ class Common extends REST_Controller {
 	  	
 	}
 
+
+	public function getrtoList_get() {
+
+                                  
+
+                          
+
+                                   $rtocode =trim($this->input->get('rtoCode'));
+
+                                   $this->db->select('DISTINCT(region_code)');
+
+                                                       $this->db->like('region_code', $this->security->xss_clean( $rtocode) , 'after');
+
+                                                       $this->db->limit(10, 0);           
+
+                                                       $query = $this->db->get('rto');
+
+                                                                   
+
+                                                       $count_row = $query->num_rows();
+
+                                                      
+
+                                                       $a=[];
+
+                                                       foreach ($query->result_array() as $row)
+
+                                                       {           
+
+                                                                    array_push($a , $row);
+
+                                                       }
+
+                                                       return $this->response(json_encode($a), REST_Controller::HTTP_OK);
+
+                          
+
+              }
+
+              public function getallstates_get() {
+
+                          
+
+                                  
+
+                                   $this->db->select('DISTINCT(name),id');                                         
+
+                                                       $query = $this->db->get('states');
+
+                                                                   
+
+                                                       $count_row = $query->num_rows();
+
+                                                      
+
+                                                       $a=[];
+
+                                                       foreach ($query->result_array() as $row)
+
+                                                       {           
+
+                                                                    array_push($a , $row);
+
+                                                       }
+
+                                                       return $this->response(json_encode($a), REST_Controller::HTTP_OK);
+
+                          
+
+              }
+
+             
+
+              public function getfilteredcities_get() {
+
+                          
+
+                                   $stateid =trim($this->input->get('stateid'));
+
+                                   $this->db->where('state_id',$stateid );               
+
+                                                      
+
+                                                       $query = $this->db->get('cities');
+
+                                                                   
+
+                                                       $count_row = $query->num_rows();
+
+                                                      
+
+                                                       $a=[];
+
+                                                       foreach ($query->result_array() as $row)
+
+                                                       {           
+
+                                                                    array_push($a , $row);
+
+                                                       }
+
+                                                       return $this->response(json_encode($a), REST_Controller::HTTP_OK);
+
+                          
+
+              }
+
+              public function getfilteredrtos_get() {
+
+                          
+
+                                   $cityname =trim($this->input->get('cityName'));
+
+                                                       $this->db->select('region_code');       
+
+                                                       $this->db->like('LOWER(registered_city_name)', strtolower($cityname));
+
+                                                       $query = $this->db->get('rto');
+
+                                                                   
+
+                                                       $count_row = $query->num_rows();
+
+                                                      
+
+                                                       $a=[];
+
+                                                       foreach ($query->result_array() as $row)
+
+                                                       {           
+
+                                                                    array_push($a , $row);
+
+                                                       }
+
+                                                       return $this->response(json_encode($a), REST_Controller::HTTP_OK);
+
+                          
+
+              }
+              
+
 }
