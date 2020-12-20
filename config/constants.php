@@ -88,3 +88,4 @@ define('EMAIL_FROM_NAME','Lets Secure');
 define('EMAIL_SUBJECT_AGENT_REGI','Lets Secure:Agent Registraion Confirmation');
 define("REQUEST_SUCESS", '{"status" =>1 , "message" => "sucess.."}');
 define("REQUEST_ERROR", '{"status" =>0 , "error" => "Request Data having problem..."}');
+define('LIST_BIKE_ARY', array());

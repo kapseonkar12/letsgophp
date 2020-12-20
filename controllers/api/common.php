@@ -21,6 +21,8 @@ class Common extends REST_Controller {
 	  	parent::__construct();
 	  	$this->load->database();
 	  	$this->load->model("Doemail");
+	  	define("VEHICLE_MASTER_DIGIT_TBL","master_motor_digit");
+	  	define("RTO_TBL","rto");
 	  }
 	  
 	  public function index_get() {
@@ -197,7 +199,7 @@ class Common extends REST_Controller {
 
                                                        $this->db->limit(10, 0);           
 
-                                                       $query = $this->db->get('rto');
+                                                       $query = $this->db->get(RTO_TBL);
 
                                                                    
 
@@ -253,8 +255,78 @@ class Common extends REST_Controller {
 
               }
 
-             
-
+             public function getselectedrtodata_get() {
+		
+		        $region_code =trim($this->input->get('region_code'));
+		        $this->db->select('registered_state_name,registered_city_name');	
+                $this->db->where('region_code',$region_code );	
+                $this->db->limit(1, 0);				
+				$query = $this->db->get(RTO_TBL);
+				return $this->response(json_encode($query->result()), REST_Controller::HTTP_OK);
+					
+	}
+	public function getfilteredmodels_get() {
+		        $maker =trim($this->input->get('maker'));
+		        $this->db->select('DISTINCT(Model)');	
+                $this->db->where('Make',$maker );		
+				$this->db->order_by("Model", "asc");
+				$query = $this->db->get(VEHICLE_MASTER_DIGIT_TBL);
+				return $this->response(json_encode($query->result()), REST_Controller::HTTP_OK);
+					
+	}
+	public function getfilteredfuelversions_get() {
+		        $model =trim($this->input->get('model'));
+		        $this->db->select('DISTINCT(Fuel_Type)');	
+                $this->db->where('Model',$model );		
+				$this->db->order_by("Fuel_Type", "asc");
+				$query = $this->db->get(VEHICLE_MASTER_DIGIT_TBL);
+				return $this->response(json_encode($query->result()), REST_Controller::HTTP_OK);
+					
+	}
+	 public function getselectedmakerdata_get() {
+		
+		        $maker =trim($this->input->get('Make'));
+		        $this->db->select('Make,Model,Fuel_Type');	
+                $this->db->where('Make',$maker );	
+                $this->db->limit(1, 0);						
+				$query = $this->db->get(VEHICLE_MASTER_DIGIT_TBL);
+				return trim($this->response(json_encode($query->result()), REST_Controller::HTTP_OK));
+					
+	}
+	public function getallmaker_get() {
+		
+		        
+		        $this->db->select('DISTINCT(Make)');				
+				$query = $this->db->get(VEHICLE_MASTER_DIGIT_TBL);
+		        $this->db->order_by("Make", "asc");
+				$count_row = $query->num_rows();
+				
+				$a=[];
+				foreach ($query->result_array() as $row)
+				{	
+					array_push($a , $row);
+				}
+				return $this->response(json_encode($a), REST_Controller::HTTP_OK);
+		
+	}
+public function getSearchedmaker_get() {
+		
+		        $make =trim($this->input->get('make'));
+				$this->db->select('DISTINCT(Make)');	
+				$this->db->like('Make', $this->security->xss_clean( $make) , 'after');	
+				$this->db->limit(10, 0);					
+				$query = $this->db->get(VEHICLE_MASTER_DIGIT_TBL);
+					
+				$count_row = $query->num_rows();
+				
+				$a=[];
+				foreach ($query->result_array() as $row)
+				{	
+					array_push($a , $row);
+				}
+				return $this->response(json_encode($a), REST_Controller::HTTP_OK);
+		
+	}
               public function getfilteredcities_get() {
 
                           
@@ -293,35 +365,153 @@ class Common extends REST_Controller {
 
                           
 
-                                   $cityname =trim($this->input->get('cityName'));
+									$cityname =trim($this->input->get('cityName'));
 
-                                                       $this->db->select('region_code');       
+									$this->db->select('region_code');       
 
-                                                       $this->db->like('LOWER(registered_city_name)', strtolower($cityname));
+									$this->db->like('LOWER(registered_city_name)', strtolower($cityname));
 
-                                                       $query = $this->db->get('rto');
+									$query = $this->db->get(RTO_TBL);
 
-                                                                   
+									           
 
-                                                       $count_row = $query->num_rows();
+									$count_row = $query->num_rows();
 
-                                                      
 
-                                                       $a=[];
 
-                                                       foreach ($query->result_array() as $row)
+									$a=[];
 
-                                                       {           
+									foreach ($query->result_array() as $row)
 
-                                                                    array_push($a , $row);
+									{           
 
-                                                       }
+									            array_push($a , $row);
 
-                                                       return $this->response(json_encode($a), REST_Controller::HTTP_OK);
+									}
+
+									return $this->response(json_encode($a), REST_Controller::HTTP_OK);
 
                           
 
               }
+public function getSearchedrtos_get() {
+		
+		        $region =trim($this->input->get('region'));
+				$this->db->select('DISTINCT(region_code)');	
+				$this->db->like('region_code', $this->security->xss_clean( $region) , 'after');	
+				$this->db->limit(10, 0);					
+				$query = $this->db->get(RTO_TBL);
+					
+				$count_row = $query->num_rows();
+				
+				$a=[];
+				foreach ($query->result_array() as $row)
+				{	
+					array_push($a , $row);
+				}
+				return $this->response(json_encode($a), REST_Controller::HTTP_OK);
+		
+	}
+              public function getAllBikeMake_get() {
+
+						$this->db->distinct();
+						$this->db->select('make');
+						$where = " vehicle_type in('MotorBike','Scooter') ";
+						$this->db->where($where);
+						$query = $this->db->get(VEHICLE_MASTER_DIGIT_TBL);
+						$count_row = $query->num_rows();
+						//echo "<pre>"; print_r( $this->db);
+						$a=[];
+
+						if($count_row > 0){
+							foreach ($query->result_array() as $row)
+
+									{           
+
+									            array_push($a , $row);
+
+									}
+
+									return $this->response(json_encode( $a ), REST_Controller::HTTP_OK);
+						} else 
+							return $this->response(json_encode('No Make found'), REST_Controller::HTTP_OK);
+              }
               
 
+              public function getAllBikeModel_get() {
+					
+					$bikemaker =trim($this->input->get('bikemaker'));
+					$this->form_validation->set_data($this->input->get());
+					$this->form_validation->set_rules('bikemaker', 'Bike Maker', 'required|trim|xss_clean');
+
+					if($this->form_validation->run() === false ) {
+
+
+					} else {
+
+						$this->db->distinct();
+						$this->db->select('model');
+						$where = " make  like '%$bikemaker%' and vehicle_type in('MotorBike','Scooter')  ";
+						$this->db->where($where);
+						$query = $this->db->get(VEHICLE_MASTER_DIGIT_TBL);
+						$count_row = $query->num_rows();
+						//echo "<pre>"; print_r( $this->db);
+						$a=[];
+
+						if($count_row > 0){
+							foreach ($query->result_array() as $row)
+
+									{           
+
+									            array_push($a , $row);
+
+									}
+
+									return $this->response(json_encode( $a ), REST_Controller::HTTP_OK);
+						} else 
+							return $this->response(json_encode('No Make found'), REST_Controller::HTTP_OK);
+					}
+              			
+              }
+
+              public function getAllBikeVariant_get() {
+
+              	$bikemodel =trim($this->input->get('bikemodel'));
+					$this->form_validation->set_data($this->input->get());
+					$this->form_validation->set_rules('bikemodel', 'Bike Model', 'required|trim|xss_clean');
+
+					if($this->form_validation->run() === false ) {
+
+
+					} else {
+
+						$this->db->distinct();
+						$this->db->select('vehicle_code');
+						$this->db->select('make');
+						$this->db->select('model');
+						$this->db->select('cubic_capacity');
+						$this->db->select('variant');
+						$this->db->select('body_type');
+						$this->db->select('vehicle_type');
+						$where = " model  like '$bikemodel%'  and vehicle_type in('MotorBike','Scooter')";
+						$this->db->where($where);
+						$query = $this->db->get(VEHICLE_MASTER_DIGIT_TBL);
+						$count_row = $query->num_rows();
+						//echo "<pre>"; print_r( $this->db);
+						$a=[];
+
+						if($count_row > 0){
+										foreach ($query->result_array() as $row)
+										{           
+
+									            array_push($a , $row);
+
+										}
+
+									return $this->response(json_encode( $a ), REST_Controller::HTTP_OK);
+						} else 
+							return $this->response(json_encode('No Make found'), REST_Controller::HTTP_OK);
+					}
+
+              }
 }

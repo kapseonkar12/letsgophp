@@ -112,7 +112,7 @@ class Agentpos extends REST_Controller {
 
 		//print_r($this->input->post());
 		if($this->form_validation->run() === false ) {
-			echo validation_errors();
+			//echo validation_errors();
 
 			return $this->response(json_encode(REQUEST_ERROR), REST_Controller::HTTP_BAD_REQUEST);
 
