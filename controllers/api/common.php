@@ -459,7 +459,7 @@ public function getSearchedrtos_get() {
 						$this->db->select('variant');
 						$this->db->select('body_type');
 						$this->db->select('vehicle_type');
-						$where = " model  like '$bikemodel%'  and vehicle_type in('MotorBike','Scooter')";
+						$where = " model  like '$bikemodel'  and vehicle_type in('MotorBike','Scooter')";
 						$this->db->where($where);
 						$query = $this->db->get(VEHICLE_MASTER_DIGIT_TBL);
 						$count_row = $query->num_rows();
