@@ -717,20 +717,25 @@ class Bike extends REST_Controller {
 	
 				$result_jsonObject = json_decode($result_resp);
 				//print_r($result_jsonObject);
-				$actualresult = array();
-				//print_r($result_jsonObject->data);
+				if($result_jsonObject->data->errcode ==""){
+						$actualresult = array();
+					//print_r($result_jsonObject->data);
 
-				$actualresult["policy_name"] ="Tata Agi";
-				$actualresult["idv"] =$result_jsonObject->data->quotationdata->revised_idv;
-				$actualresult["minidv"] =$result_jsonObject->data->quotationdata->idvlowerlimit;
-				$actualresult["maximumidv"] =$result_jsonObject->data->quotationdata->idvupperlimit;
-				$actualresult["netpremium"] =$result_jsonObject->data->NETPREM;
-				$actualresult["totalpayable"] =$result_jsonObject->data->TOTALPAYABLE;
-				$actualresult["servicetax"] =$result_jsonObject->data->TAX->total_prem;
-				$actualresult["policy_img"] ="../assets/images/Tataagi.png";
-				//print_r($actualresult);
+					$actualresult["policy_name"] ="Tata Agi";
+					$actualresult["idv"] =$result_jsonObject->data->quotationdata->revised_idv;
+					$actualresult["minidv"] =$result_jsonObject->data->quotationdata->idvlowerlimit;
+					$actualresult["maximumidv"] =$result_jsonObject->data->quotationdata->idvupperlimit;
+					$actualresult["netpremium"] =$result_jsonObject->data->NETPREM;
+					$actualresult["totalpayable"] =$result_jsonObject->data->TOTALPAYABLE;
+					$actualresult["servicetax"] =$result_jsonObject->data->TAX->total_prem;
+					$actualresult["policy_img"] ="../assets/images/Tataagi.png";
+					//print_r($actualresult);
 
-				return $actualresult;	
+					return $actualresult;		
+				} else {
+					return;
+				}
+				
 	
         
 	}
